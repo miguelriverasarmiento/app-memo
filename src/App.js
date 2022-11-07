@@ -1,20 +1,32 @@
-import { useState, memo } from 'react';
+import { useState, memo, useMemo, useCallback } from 'react';
 import './App.css';
 
-function Swatch({ color }) {
-  console.log(`Swatch rendered ${color}`)
+function Swatch({ params, onClick }) {
+  console.log(`Swatch rendered ${params.color}`)
   return(
-    <div style={{ margin: 2, width: 75, height: 75, backgroundColor: color }}></div>
+    <div style={{ 
+      margin: 2, 
+      width: 75, 
+      height: 75, 
+      backgroundColor: params.color 
+    }}
+    onClick={onClick}
+    ></div>
   )
 }
 
-const MemoedSwatch = memo(Swatch);
+const MemoedSwatch = memo(Swatch, (prevProps, nextProps) => {
+  return prevProps.params.color === nextProps.params.color;
+});
 
 function App() {
 
   const [appRenderIndex, setAppRenderIndex] = useState(0);
   const [color, setColor] = useState("red")
   console.log(`App rendered ${appRenderIndex}`);
+
+  const params = useMemo(() => ({ color }), [color]);
+  const onClick = useCallback(() => {}, []);
 
   return (
 
@@ -28,7 +40,7 @@ function App() {
         </button>
       </div>
       <div>
-        <MemoedSwatch color={color} />
+        <MemoedSwatch params={params} onClick={onClick}/>
       </div>
     </div>
   );
